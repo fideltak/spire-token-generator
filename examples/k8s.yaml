@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: null
+  name: spire-token-generator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spire-token-generator
+rules:
+- apiGroups: ["*"]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+- apiGroups: ["*"]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+- apiGroups: ["*"]
+  resources: ["secrets"]
+  verbs: ["get", "create", "list", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spire-token-generator
+subjects:
+  - kind: ServiceAccount
+    name: spire-token-generator
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: spire-token-generator
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: spire-token-generator
+data:
+  token: ZHVtbXkK
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spire-token-generator
+spec:
+  restartPolicy: Never
+  serviceAccountName: spire-token-generator
+  containers:
+    - name: spire-token-generator
+      image: docker.io/fideltak/spire-token-generator:1.20.11_v0.2
+      resources:
+        requests:
+          memory: 0.1Gi
+          cpu: 50m
+        limits:
+          memory: 0.1Gi
+          cpu: 50m
+      env:
+      - name: SPIRE_POD_LABEL
+        value: "app=spire-server"
+      - name: SPIRE_SPIFFE_ID
+        value: "spiffe://swarm.learning/swarm/sn-agent"
+      - name: SPIRE_TOKEN_SECRET_NAME
+        value: "spire-token-generator"
