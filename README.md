@@ -13,3 +13,6 @@ The example for HPE Swarm Learning is [here](examples/swarm.yaml).
 | SPIRE\_SPIFFE\_ID | SPIFFE ID  | SPIFFE ID which you want the token. | YES |  |
 | SPIRE\_TOKEN\_SECRET\_NAME | Secret Name | To save token as kubernetes secret. | YES |  |
 |  |  |  |  |  |
+
+## Container Image Locations
+- [Docker Hub](https://hub.docker.com/repository/docker/fideltak/spire-token-generator)
